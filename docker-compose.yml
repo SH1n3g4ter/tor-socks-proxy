@@ -1,11 +1,15 @@
----
-version: "2"
+version: "3"
 
 services:
   tor-socks-proxy:
-    container_name: tor-socks-proxy
-    image: peterdavehello/tor-socks-proxy:latest
+    container_name: torproxy
+    build: .
+    image: sh1n3g4ter/tor-socks-proxy
     ports:
       - "127.0.0.1:8853:53/udp"
-      - "127.0.0.1:9150:9150/tcp"
+      - "0.0.0.0:9150:9150/tcp"
+      - "127.0.0.1:9151:9151/tcp"
+      - "0.0.0.0:9152:9152/tcp"
     restart: unless-stopped
+    environment:
+      - TOR_CONTROL_PASSWD=${TOR_CONTROL_PASSWD}

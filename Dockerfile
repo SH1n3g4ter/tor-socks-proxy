@@ -12,11 +12,14 @@ RUN echo '@edge https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/ap
     rm -rf /var/cache/apk/* && \
     tor --version
 COPY --chown=tor:root torrc /etc/tor/
+RUN mkdir /app
+COPY --chown=tor:root entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 HEALTHCHECK --timeout=10s --start-period=60s \
     CMD curl --fail --socks5-hostname localhost:9150 -I -L 'https://www.facebookwkhpilnemxj7asaniu7vnjjbiltxjqhye3mhbshg7kx5tfyd.onion/' || exit 1
 
 USER tor
-EXPOSE 8853/udp 9150/tcp
+EXPOSE 8853/udp 9150/tcp 9151/tcp 9152/tcp
 
-CMD ["/usr/bin/tor", "-f", "/etc/tor/torrc"]
+CMD ["sh","/app/entrypoint.sh"]
