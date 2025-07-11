@@ -5,11 +5,24 @@ services:
     container_name: torproxy
     build: .
     image: sh1n3g4ter/tor-socks-proxy
+    networks:
+      custom_network1:
+        ipv4_address: 172.31.13.2
     ports:
       - "127.0.0.1:8853:53/udp"
-      - "0.0.0.0:9150:9150/tcp"
-      - "127.0.0.1:9151:9151/tcp"
-      - "0.0.0.0:9152:9152/tcp"
+      - "127.0.0.1:9150:9150/tcp" #socks5
+      - "127.0.0.1:9151:9151/tcp" #control port
+      - "127.0.0.1:9152:9152/tcp" #http
     restart: unless-stopped
     environment:
       - TOR_CONTROL_PASSWD=${TOR_CONTROL_PASSWD}
+
+networks:
+  custom_network1:
+    name: tor-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.31.13.0/24
+          gateway: 172.31.13.1
